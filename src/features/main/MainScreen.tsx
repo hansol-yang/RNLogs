@@ -1,9 +1,9 @@
 import { StackNavigationProp } from '@react-navigation/stack';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
-import { logs, RNLog } from './AppNavigator';
-import { Routes } from './Routes';
+import { logs, RNLog } from '../../AppNavigator';
+import { Routes } from '../../Routes';
 
 /* Constants =========================================================== */
 /* Prop =========================================================== */
@@ -32,12 +32,12 @@ export default function MainScreen(prop: Prop) {
         };
 
         return (
-            <>
-                <Row key={idx} onPress={_onPress}>
+            <Fragment key={idx}>
+                <Row onPress={_onPress}>
                     <Title>{item.title}</Title>
                 </Row>
                 {idx === logs.length - 1 || <Divider />}
-            </>
+            </Fragment>
         );
     };
 

@@ -1,7 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
 import { LogBox } from 'react-native';
-import 'react-native-gesture-handler';
 import AppNavigator from './AppNavigator';
 
 const setup = () => {
