@@ -1,7 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-import WordOrderScreen from './features/wordOrder/WordOrderScreen';
-import MainScreen from './MainScreen';
+import WordOrderScreen from './features/word-order/WordOrderScreen';
+import MainScreen from './features/main/MainScreen';
 import { Routes } from './Routes';
 
 /* Constants =========================================================== */
@@ -31,7 +31,7 @@ export default function AppNavigator() {
             <Stack.Screen
                 name="WordOrderScreen"
                 component={WordOrderScreen}
-                options={{ title: '어순배열🧩' }}
+                options={{ headerShown: false }}
             />
         </Stack.Navigator>
     );
