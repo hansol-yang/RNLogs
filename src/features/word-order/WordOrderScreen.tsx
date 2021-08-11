@@ -1,6 +1,7 @@
 import { StackNavigationProp } from '@react-navigation/stack';
 import React, { useState } from 'react';
-import styled from 'styled-components/native';
+import { css } from 'styled-components/native';
+import Container from '../../common/Container';
 import { Routes } from '../../Routes';
 import { SCREEN_PADDING } from './helper';
 import Lines from './Lines';
@@ -40,10 +41,9 @@ const words = [
     'of',
     'object',
 ];
-const Container = styled.View`
+const containerStyle = css`
     padding: ${SCREEN_PADDING}px;
     background-color: #dfdfdf;
-    flex: 1;
 `;
 export default function WordOrderScreen(prop: Prop) {
     const {} = prop;
@@ -56,7 +56,7 @@ export default function WordOrderScreen(prop: Prop) {
     );
 
     return (
-        <Container>
+        <Container css={containerStyle}>
             <ReadyToOrderContext.Provider value={{ ready, setReady }}>
                 <WordLinesContext.Provider value={{ lines, setLines }}>
                     <Paper>
