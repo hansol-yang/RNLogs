@@ -1,5 +1,6 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
+import AudioPlayerScreen from './features/audio-player/AudioPlayerScreen';
 import MainScreen from './features/main/MainScreen';
 import SliderScreen from './features/slider/SliderScreen';
 import WordOrderScreen from './features/word-order/WordOrderScreen';
@@ -22,6 +23,10 @@ export const logs: RNLog[] = [
         title: '슬라이더🎚️',
         name: 'SliderScreen',
     },
+    {
+        title: '오디오플레이어🔊',
+        name: 'AudioPlayerScreen',
+    },
 ];
 const Stack = createStackNavigator<Routes>();
 
@@ -39,6 +44,10 @@ export default function AppNavigator() {
                 options={{ headerShown: false }}
             />
             <Stack.Screen name="SliderScreen" component={SliderScreen} />
+            <Stack.Screen
+                name="AudioPlayerScreen"
+                component={AudioPlayerScreen}
+            />
         </Stack.Navigator>
     );
 }

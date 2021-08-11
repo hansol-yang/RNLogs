@@ -1,23 +1,21 @@
 import React from 'react';
 import { css } from 'styled-components';
 import Container from '../../common/Container';
-
-import Slider from './Slider';
+import AudioPlayer from './AudioPlayer';
 
 /* Constants =========================================================== */
 /* Prop =========================================================== */
 type Prop = {};
-/* <SliderScreen/> =========================================================== */
+/* <AudioPlayerScreen/> =========================================================== */
 const containerStyle = css`
-    padding: 100px;
+    padding: 20px;
 `;
-export default function SliderScreen() {
-    const _onChange = (value: number) => {};
-
+export default function AudioPlayerScreen() {
+    const uri = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3';
     return (
         <Container css={containerStyle}>
-            <Slider value={90} onChange={_onChange} />
+            <AudioPlayer uri={uri} />
         </Container>
     );
 }
-SliderScreen.defaultProps = {};
+AudioPlayerScreen.defaultProps = {};

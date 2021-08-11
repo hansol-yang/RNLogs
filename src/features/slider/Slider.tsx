@@ -6,23 +6,27 @@ import {
 } from 'react-native-gesture-handler';
 import Animated, {
     runOnJS,
-    runOnUI,
     useAnimatedGestureHandler,
     useAnimatedStyle,
     useSharedValue,
 } from 'react-native-reanimated';
+import { FlattenSimpleInterpolation } from 'styled-components';
 import styled from 'styled-components/native';
 
 /* Prop =========================================================== */
 type Prop = {
     value: number; // percent
+    css?: FlattenSimpleInterpolation;
     onChange?: (value: number) => void; // (percent) => void
+    onStartToSlide?: () => void;
+    onEndToSlide?: () => void;
 };
 /* Constants =========================================================== */
 const THUMB_WIDTH = 15;
 /* <Slider/> =========================================================== */
-const Container = styled.View`
+const Container = styled.View<{ css?: FlattenSimpleInterpolation }>`
     flex-direction: row;
+    ${prop => prop.css}
 `;
 const Track = styled.View`
     background-color: #ccc;
@@ -47,7 +51,7 @@ const Thumb = styled.View`
     left: -${THUMB_WIDTH / 2}px;
 `;
 export default function Slider(prop: Prop) {
-    const { value, onChange } = prop;
+    const { value, onChange, onStartToSlide, onEndToSlide, ...styles } = prop;
 
     const [width, setWidth] = useState<number>(0);
 
@@ -66,8 +70,15 @@ export default function Slider(prop: Prop) {
             }
             translateX.value = current;
             ctx.x = translateX.value;
+
+            if (width > 0 && onChange !== undefined) {
+                runOnJS(onChange)((current / width) * 100);
+            }
         },
         onActive: (ev, ctx) => {
+            if (onStartToSlide !== undefined) {
+                runOnJS(onStartToSlide)();
+            }
             let next = ctx.x + ev.translationX;
             if (next < 0) {
                 next = 0;
@@ -76,8 +87,14 @@ export default function Slider(prop: Prop) {
                 next = width;
             }
             translateX.value = next;
+
             if (width > 0 && onChange !== undefined) {
                 runOnJS(onChange)((next / width) * 100);
+            }
+        },
+        onEnd: () => {
+            if (onEndToSlide !== undefined) {
+                runOnJS(onEndToSlide)();
             }
         },
     });
@@ -97,7 +114,7 @@ export default function Slider(prop: Prop) {
         setWidth(nextWidth);
     };
     return (
-        <Container onLayout={_onLayout}>
+        <Container onLayout={_onLayout} {...styles}>
             <PanGestureHandler
                 onGestureEvent={onThumbGestureEvent}
                 hitSlop={{ left: 30, right: 30, top: 30, bottom: 30 }}>
@@ -110,5 +127,6 @@ export default function Slider(prop: Prop) {
     );
 }
 Slider.defaultProps = {
+    value: 0,
     inputInPercent: 0,
 };
