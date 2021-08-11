@@ -1,7 +1,8 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
-import WordOrderScreen from './features/word-order/WordOrderScreen';
 import MainScreen from './features/main/MainScreen';
+import SliderScreen from './features/slider/SliderScreen';
+import WordOrderScreen from './features/word-order/WordOrderScreen';
 import { Routes } from './Routes';
 
 /* Constants =========================================================== */
@@ -16,6 +17,10 @@ export const logs: RNLog[] = [
     {
         title: '어순배열🧩',
         name: 'WordOrderScreen',
+    },
+    {
+        title: '슬라이더🎚️',
+        name: 'SliderScreen',
     },
 ];
 const Stack = createStackNavigator<Routes>();
@@ -33,6 +38,7 @@ export default function AppNavigator() {
                 component={WordOrderScreen}
                 options={{ headerShown: false }}
             />
+            <Stack.Screen name="SliderScreen" component={SliderScreen} />
         </Stack.Navigator>
     );
 }
