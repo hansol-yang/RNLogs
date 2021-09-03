@@ -3,4 +3,5 @@ export type Routes = {
     WordOrderScreen: undefined;
     SliderScreen: undefined;
     AudioPlayerScreen: undefined;
+    ViewPagerScreen: undefined;
 };
