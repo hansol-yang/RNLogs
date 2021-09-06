@@ -4,4 +4,5 @@ export type Routes = {
     SliderScreen: undefined;
     AudioPlayerScreen: undefined;
     ViewPagerScreen: undefined;
+    HorizontalDatePickerScreen: undefined;
 };

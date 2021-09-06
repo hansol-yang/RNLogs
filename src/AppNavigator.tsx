@@ -1,6 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import AudioPlayerScreen from './features/audio-player/AudioPlayerScreen';
+import HorizontalDatePickerScreen from './features/horizontal-datepicker/HorizontalDatePickerScreen';
 import MainScreen from './features/main/MainScreen';
 import SliderScreen from './features/slider/SliderScreen';
 import ViewPagerScreen from './features/viewpager/ViewPagerScreen';
@@ -32,6 +33,10 @@ export const logs: RNLog[] = [
         title: '뷰페이저📖',
         name: 'ViewPagerScreen',
     },
+    {
+        title: '수평날짜선택📅',
+        name: 'HorizontalDatePickerScreen',
+    },
 ];
 const Stack = createStackNavigator<Routes>();
 
@@ -54,6 +59,10 @@ export default function AppNavigator() {
                 component={AudioPlayerScreen}
             />
             <Stack.Screen name="ViewPagerScreen" component={ViewPagerScreen} />
+            <Stack.Screen
+                name="HorizontalDatePickerScreen"
+                component={HorizontalDatePickerScreen}
+            />
         </Stack.Navigator>
     );
 }
