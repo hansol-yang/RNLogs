@@ -1,152 +1,91 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import {
-    FlatList,
-    ListRenderItem,
-    NativeScrollEvent,
-    NativeSyntheticEvent,
-} from 'react-native';
-import { runOnJS, runOnUI, useSharedValue } from 'react-native-reanimated';
+import { FlatList, Insets, ListRenderItem } from 'react-native';
 import styled from 'styled-components/native';
 import DatePickerContext from './date-picker.context';
-import {
-    getDates,
-    getNextYearAndMonth,
-    getNumberOfDaysInMonth,
-    getPrevYearAndMonth,
-    TDate,
-} from './helper';
+import { getDefaultDates, getIdxOfFirstDate, isToday, TDate } from './helper';
 
 /* Constants =========================================================== */
-const SIZE = 50,
-    WRAPPER_PADDING = 15,
-    MARGIN = 10;
+const SIZE = 30,
+    PADDING_LEFT = 15,
+    MARGIN_RIGHT = 10;
+const HIT_SLOP: Insets = {
+    left: SIZE + 5,
+    right: SIZE + 5,
+    top: SIZE + 7,
+    bottom: SIZE + 7,
+};
 /* Prop =========================================================== */
-type Prop = {};
+type Prop = {
+    minYear: number;
+};
 /* <DayPicker/> =========================================================== */
 const Wrapper = styled.View`
     background-color: #fff;
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    padding: 7px ${WRAPPER_PADDING}px;
+    padding: 7px ${PADDING_LEFT}px;
     border-radius: 20px;
-    width: ${SIZE * 10 + MARGIN * 9 + WRAPPER_PADDING * 2 + 2}px;
+    width: ${SIZE * 10 + PADDING_LEFT * 2 + MARGIN_RIGHT * 9}px;
 `;
-const Item = styled.TouchableOpacity`
+type ItemProp = {
+    markToday: boolean;
+};
+const Item = styled.TouchableOpacity<ItemProp>`
     width: ${SIZE}px;
     height: ${SIZE}px;
-    margin-right: ${MARGIN}px;
     border: 1px solid #d9d9d9;
-    border-radius: 25px;
     justify-content: center;
     align-items: center;
+    border-radius: ${SIZE / 2}px;
+    margin-right: ${MARGIN_RIGHT}px;
+    background-color: ${prop => (prop.markToday ? '#d9d9d9' : '#fff')};
 `;
 const Title = styled.Text``;
+export default function DayPicker(prop: Prop) {
+    const { minYear } = prop;
 
-export default function DayPicker() {
     const listRef = useRef<FlatList<TDate> | null>();
-    const { date, setDate } = useContext(DatePickerContext);
-    const [dates, setDates] = useState<TDate[]>([]);
-
-    const isAnimating = useSharedValue(false);
-
-    const setDefaultDates = () => {
-        const prev = getPrevYearAndMonth(date.year, date.month);
-        const next = getNextYearAndMonth(date.year, date.month);
-
-        const prevDates = getDates(prev.year, prev.month);
-        const currentDates = getDates(date.year, date.month);
-        const nextDates = getDates(next.year, next.month);
-
-        setDates([...prevDates, ...currentDates, ...nextDates]);
-    };
+    const { date } = useContext(DatePickerContext);
+    const [defaultDates, defaultIdx] = getDefaultDates(minYear);
+    const [dates, setDates] = useState<TDate[]>(defaultDates);
 
     useEffect(() => {
-        setDefaultDates();
-    }, []);
-
-    useEffect(() => {
-        if (dates.length === 0) return;
-        const neverRendered =
-            dates.findIndex(
-                elem => elem.year === date.year && elem.month === date.month,
-            ) === -1;
-
-        if (neverRendered) {
-            setDefaultDates();
-        } else {
-            if (date.needToScroll) {
-                listRef.current?.scrollToIndex({
-                    animated: true,
-                    index: dates.findIndex(
-                        elem =>
-                            elem.year === date.year &&
-                            elem.month === date.month,
-                    ),
-                });
-            }
-        }
-    }, [date, dates]);
+        if (!date.needToScroll) return;
+        const index = getIdxOfFirstDate(dates, date);
+        listRef.current?.scrollToIndex({ animated: true, index });
+    }, [date]);
 
     const renderItem: ListRenderItem<TDate> = ({ item }) => {
         const _onPress = () => {
             console.log(Object.values(item).join('-'));
         };
+        const markToday = isToday(item);
         return (
-            <Item onPress={_onPress}>
+            <Item markToday={markToday} onPress={_onPress}>
                 <Title>{item.date}</Title>
             </Item>
         );
     };
+    const keyExtractor = (item: TDate) => Object.values(item).join('-');
+    const getItemLayout = (_: TDate[] | null | undefined, index: number) => ({
+        length: SIZE + MARGIN_RIGHT,
+        offset: (SIZE + MARGIN_RIGHT) * index,
+        index,
+    });
 
-    const _onMomentumScrollBegin = () => {
-        isAnimating.value = true;
-    };
-
-    const _onMomentumScrollEnd = (
-        ev: NativeSyntheticEvent<NativeScrollEvent>,
-    ) => {
-        runOnUI(() => {
-            'worklet';
-            if (isAnimating.value) {
-                // Animation has been ended
-                const { contentOffset } = ev.nativeEvent;
-                const estimatedIdx = contentOffset.x / (SIZE + MARGIN);
-                const current = dates[Math.floor(estimatedIdx)];
-                if (
-                    current.year !== date.year ||
-                    current.month !== date.month
-                ) {
-                    runOnJS(setDate)({
-                        year: current.year,
-                        month: current.month,
-                        needToScroll: false,
-                    });
-                }
-                isAnimating.value = false;
-            }
-        })();
-    };
     return (
         <Wrapper>
             <FlatList
                 ref={ref => (listRef.current = ref)}
                 data={dates}
                 showsHorizontalScrollIndicator={false}
-                initialScrollIndex={getNumberOfDaysInMonth(
-                    date.year,
-                    date.month,
-                )}
+                initialScrollIndex={defaultIdx - 3}
+                hitSlop={HIT_SLOP}
                 horizontal
-                keyExtractor={item => Object.values(item).join('-')}
-                getItemLayout={(_, index) => ({
-                    length: SIZE + MARGIN,
-                    offset: (SIZE + MARGIN) * index,
-                    index,
-                })}
+                keyExtractor={keyExtractor}
+                getItemLayout={getItemLayout}
                 renderItem={renderItem}
-                onMomentumScrollBegin={_onMomentumScrollBegin}
-                onMomentumScrollEnd={_onMomentumScrollEnd}
             />
         </Wrapper>
     );

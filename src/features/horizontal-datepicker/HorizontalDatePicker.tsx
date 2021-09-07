@@ -26,7 +26,7 @@ export default function HorizontalDatePicker() {
         <DatePickerContext.Provider value={{ date, setDate }}>
             <Wrapper>
                 <MonthPicker />
-                <DayPicker />
+                <DayPicker minYear={2013} />
             </Wrapper>
         </DatePickerContext.Provider>
     );
