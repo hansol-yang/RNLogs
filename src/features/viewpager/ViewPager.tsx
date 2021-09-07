@@ -1,4 +1,5 @@
 import React, { ReactElement, useState } from 'react';
+import { useEffect } from 'react';
 import { LayoutChangeEvent } from 'react-native';
 import {
     PanGestureHandler,
@@ -18,18 +19,26 @@ import ViewPagerPage from './ViewPagerPage';
 /* Prop =========================================================== */
 type Prop = {
     children: ReactElement[];
+    page?: number;
+    onReachedHeading?: () => void;
+    onReachedTail?: () => void;
     onChangePage?: (page: number) => void;
 };
 /* <ViewPager/> =========================================================== */
 const Wrapper = styled.View`
-    background-color: red;
     flex-direction: row;
     flex: 1;
     width: 50%;
     overflow: hidden;
 `;
 export default function ViewPager(prop: Prop) {
-    const { children, onChangePage } = prop;
+    const {
+        children,
+        page: pageFromParent,
+        onChangePage,
+        onReachedHeading,
+        onReachedTail,
+    } = prop;
     const maxIndex = children.length - 1;
 
     const [width, setWidth] = useState(0);
@@ -58,6 +67,14 @@ export default function ViewPager(prop: Prop) {
         onEnd: () => {
             const nextPage = getNextPage(page, maxIndex, state.value);
 
+            if (state.value === 'SCROLL_RIGHT' && page - 2 === 0) {
+                onReachedHeading && runOnJS(onReachedHeading)();
+            }
+
+            if (state.value === 'SCROLL_LEFT' && page + 2 === maxIndex) {
+                onReachedTail && runOnJS(onReachedTail)();
+            }
+
             const nextTranslateX = -(width * nextPage);
             translateX.value = withSpring(nextTranslateX);
 
@@ -69,6 +86,17 @@ export default function ViewPager(prop: Prop) {
             state.value = 'IDLE';
         },
     });
+
+    useEffect(() => {
+        if (
+            pageFromParent === undefined ||
+            pageFromParent === -1 ||
+            width === 0
+        )
+            return;
+        translateX.value = -(width * pageFromParent);
+        setPage(pageFromParent);
+    }, [pageFromParent, width]);
 
     const renderItem = (item: ReactElement) => (
         <ViewPagerPage key={item.key} translateX={translateX}>

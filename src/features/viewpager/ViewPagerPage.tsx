@@ -11,7 +11,6 @@ type Prop = {
 /* <ViewPagerPage/> =========================================================== */
 const Wrapper = styled.View`
     width: 100%;
-    background-color: green;
 `;
 export default function ViewPagerPage(prop: Prop) {
     const { children, translateX } = prop;
