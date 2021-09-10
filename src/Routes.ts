@@ -5,4 +5,5 @@ export type Routes = {
     AudioPlayerScreen: undefined;
     ViewPagerScreen: undefined;
     HorizontalDatePickerScreen: undefined;
+    LinearChartScreen: undefined;
 };
