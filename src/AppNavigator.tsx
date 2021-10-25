@@ -1,6 +1,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import AudioPlayerScreen from './features/audio-player/AudioPlayerScreen';
+import CalendarScreen from './features/calendar/CalendarScreen';
 import HorizontalDatePickerScreen from './features/horizontal-datepicker/HorizontalDatePickerScreen';
 import LinearChartScreen from './features/linear-chart/LinearChartScreen';
 import MainScreen from './features/main/MainScreen';
@@ -42,6 +43,10 @@ export const logs: RNLog[] = [
         title: '선형차트📈',
         name: 'LinearChartScreen',
     },
+    {
+        title: '캘린더🗓️',
+        name: 'CalendarScreen',
+    },
 ];
 const Stack = createStackNavigator<Routes>();
 
@@ -73,6 +78,7 @@ export default function AppNavigator() {
                 component={LinearChartScreen}
                 options={{ headerShown: false }}
             />
+            <Stack.Screen name="CalendarScreen" component={CalendarScreen} />
         </Stack.Navigator>
     );
 }

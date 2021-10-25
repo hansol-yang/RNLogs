@@ -6,4 +6,5 @@ export type Routes = {
     ViewPagerScreen: undefined;
     HorizontalDatePickerScreen: undefined;
     LinearChartScreen: undefined;
+    CalendarScreen: undefined;
 };
